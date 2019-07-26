@@ -41,7 +41,7 @@
 float pulso_servos[NUM_SERVOS] = {0, 0, 0, 0, 0};
 int servo;
 
-void __interrupt() servos(){
+void __interrupt() servos() {
     if (PIR1bits.TMR1IF) {
 
         switch (servo) {
