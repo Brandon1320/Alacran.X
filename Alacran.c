@@ -53,6 +53,7 @@ void __interrupt() servos() {
                     servo++;
                 }
 
+                break;
             case 1:
                 SERVO2 = 1 - SERVO2;
                 if (SERVO2) TMR1 = PULSO_MAX - ((pulso_servos[1] * _XTAL_FREQ) / DIECISEIS);
@@ -61,6 +62,7 @@ void __interrupt() servos() {
                     servo++;
                 }
 
+                break;
             case 2:
                 SERVO3 = 1 - SERVO3;
                 if (SERVO3) TMR1 = PULSO_MAX - ((pulso_servos[2] * _XTAL_FREQ) / DIECISEIS);
@@ -69,6 +71,7 @@ void __interrupt() servos() {
                     servo++;
                 }
 
+                break;
             case 3:
                 SERVO4 = 1 - SERVO4;
                 if (SERVO4) TMR1 = PULSO_MAX - ((pulso_servos[3] * _XTAL_FREQ) / DIECISEIS);
@@ -77,16 +80,14 @@ void __interrupt() servos() {
                     servo++;
                 }
 
+                break;
             case 4:
                 SERVO5 = 1 - SERVO5;
                 if (SERVO5) TMR1 = PULSO_MAX - ((pulso_servos[4] * _XTAL_FREQ) / DIECISEIS);
                 else {
                     TMR1 = PULSO_MAX - ((((0.02 / NUM_SERVOS) - pulso_servos[4]) * _XTAL_FREQ) / DIECISEIS);
-                    servo++;
+                    servo = 0;
                 }
-
-            default:
-                servo %= 5;
         }
 
         PIR1bits.TMR1IF = 0;
