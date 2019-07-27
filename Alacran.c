@@ -121,49 +121,50 @@ void main(void) {
     T1CONbits.TMR1ON = 1; // Encender el timer
 
     while (1) {
-        servo = 0;
-        pulso_servos[0] = 0.0010;
-        __delay_ms(100);
 
-        servo = 1;
-        pulso_servos[1] = 0.0010;
-        __delay_ms(100);
+        if (PORTAbits.RA1 == 0) {
+            PIR1bits.TMR1IF = 0;
+            
+            servo = 4;
+            pulso_servos[4] = 0.0020;
+            __delay_ms(100);
 
-        servo = 2;
-        pulso_servos[2] = 0.0010;
-        __delay_ms(100);
+            pulso_servos[4] = 0.0010;
+            __delay_ms(100);
+        } else {
+            servo = 0;
+            pulso_servos[0] = 0.0010;
+            __delay_ms(100);
 
-        servo = 3;
-        pulso_servos[3] = 0.0010;
-        __delay_ms(100);
+            servo = 1;
+            pulso_servos[1] = 0.0010;
+            __delay_ms(100);
 
+            servo = 2;
+            pulso_servos[2] = 0.0010;
+            __delay_ms(100);
 
-        servo = 0;
-        pulso_servos[0] = 0.0020;
-        __delay_ms(100);
-
-        servo = 1;
-        pulso_servos[1] = 0.0020;
-        __delay_ms(100);
-
-        servo = 2;
-        pulso_servos[2] = 0.0020;
-        __delay_ms(100);
-
-        servo = 3;
-        pulso_servos[3] = 0.0020;
-        __delay_ms(100);
+            servo = 3;
+            pulso_servos[3] = 0.0010;
+            __delay_ms(100);
 
 
-        //        if (PORTAbits.RA0 == 1) {
-        //            servo = 4;
-        //            pulso_servos[4] = 0.0020;
-        //            __delay_ms(100);
-        //        } else {
-        //            servo = 4;
-        //            pulso_servos[4] = 0.0010;
-        //            __delay_ms(100);
-        //        }
+            servo = 0;
+            pulso_servos[0] = 0.0020;
+            __delay_ms(100);
+
+            servo = 1;
+            pulso_servos[1] = 0.0020;
+            __delay_ms(100);
+
+            servo = 2;
+            pulso_servos[2] = 0.0020;
+            __delay_ms(100);
+
+            servo = 3;
+            pulso_servos[3] = 0.0020;
+            __delay_ms(100);
+        }
     }
 
     return;
