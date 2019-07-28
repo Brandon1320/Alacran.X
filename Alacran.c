@@ -164,6 +164,9 @@ void main(void) {
             servo = 3;
             pulso_servos[3] = 0.0020;
             __delay_ms(100);
+            
+            
+            __delay_ms(200);
         }
     }
 
