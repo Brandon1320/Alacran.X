@@ -33,7 +33,7 @@
 #define SERVO2 LATB1
 #define SERVO3 LATB2
 #define SERVO4 LATB3
-#define SERVO5 LATB4    
+#define SERVO5 LATB4  
 #define NUM_SERVOS 5
 #define PULSO_MAX 65536
 #define DIECISEIS 16
@@ -41,8 +41,8 @@
 float pulso_servos[NUM_SERVOS] = {0, 0, 0, 0, 0};
 int servo;
 
-void __interrupt() servos() {
-    if (PIR1bits.TMR1IF) {
+void  __interrupt() servos() {
+    if (PIR1bits.TMR1IF ) {
 
         switch (servo) {
             case 0:
