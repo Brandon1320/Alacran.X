@@ -6,6 +6,7 @@
  */
 
 #include <xc.h>
+#include <PIC16f1938.h>
 #include <stdlib.h>
 
 // CONFIG1
