@@ -1,9 +1,3 @@
-/*
- * File:   Alacran.c
- * Author: Brandon Sánchez
- *
- * Created on 24 de Julio de 2019, 12:28 AM
- */
 
 #include <xc.h>
 #include <PIC16f1938.h>
@@ -102,8 +96,8 @@ void main(void) {
     ////
 
     // Configuracion del puerto
-    TRISA = 0;
-    PORTA = 1;
+    TRISA = 1;
+    PORTA = 0;
     TRISB = 0;
     PORTB = 0;
 
