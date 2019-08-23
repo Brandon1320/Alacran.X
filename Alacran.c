@@ -1,8 +1,5 @@
-
 #include <xc.h>
-#include <PIC16f1938.h>
-#include <stdlib.h>
-
+#define _XTAL_FREQ 32000000
 // CONFIG1
 #pragma config FOSC = INTOSC    // Oscillator Selection (INTOSC oscillator: I/O function on CLKIN pin)
 #pragma config WDTE = OFF       // Watchdog Timer Enable (WDT disabled)
@@ -23,147 +20,80 @@
 #pragma config BORV = LO        // Brown-out Reset Voltage Selection (Brown-out Reset Voltage (Vbor), low trip point selected.)
 #pragma config LVP = ON         // Low-Voltage Programming Enable (Low-voltage programming enabled)
 
-#define _XTAL_FREQ 32000000
-#define SERVO1 LATB0
-#define SERVO2 LATB1
-#define SERVO3 LATB2
-#define SERVO4 LATB3
-#define SERVO5 LATB4  
-#define NUM_SERVOS 5
-#define PULSO_MAX 65536
-#define DIECISEIS 16
+#define servo1 LATB0
+#define servo2 LATB1
 
-float pulso_servos[NUM_SERVOS] = {0, 0, 0, 0, 0};
+#define num_servos 2
+
 int servo;
+float pulso_servos[num_servos]={0,0};
 
-void  __interrupt() servos() {
-    if (PIR1bits.TMR1IF ) {
-
-        switch (servo) {
-            case 0:
-                SERVO1 = 1 - SERVO1;
-                if (SERVO1) TMR1 = PULSO_MAX - ((pulso_servos[0] * _XTAL_FREQ) / DIECISEIS);
-                else {
-                    TMR1 = PULSO_MAX - ((((0.02 / NUM_SERVOS) - pulso_servos[0]) * _XTAL_FREQ) / DIECISEIS);
-                    servo++;
-                }
-
-                break;
-            case 1:
-                SERVO2 = 1 - SERVO2;
-                if (SERVO2) TMR1 = PULSO_MAX - ((pulso_servos[1] * _XTAL_FREQ) / DIECISEIS);
-                else {
-                    TMR1 = PULSO_MAX - ((((0.02 / NUM_SERVOS) - pulso_servos[1]) * _XTAL_FREQ) / DIECISEIS);
-                    servo++;
-                }
-
-                break;
-            case 2:
-                SERVO3 = 1 - SERVO3;
-                if (SERVO3) TMR1 = PULSO_MAX - ((pulso_servos[2] * _XTAL_FREQ) / DIECISEIS);
-                else {
-                    TMR1 = PULSO_MAX - ((((0.02 / NUM_SERVOS) - pulso_servos[2]) * _XTAL_FREQ) / DIECISEIS);
-                    servo++;
-                }
-
-                break;
-            case 3:
-                SERVO4 = 1 - SERVO4;
-                if (SERVO4) TMR1 = PULSO_MAX - ((pulso_servos[3] * _XTAL_FREQ) / DIECISEIS);
-                else {
-                    TMR1 = PULSO_MAX - ((((0.02 / NUM_SERVOS) - pulso_servos[3]) * _XTAL_FREQ) / DIECISEIS);
-                    servo++;
-                }
-
-                break;
-            case 4:
-                SERVO5 = 1 - SERVO5;
-                if (SERVO5) TMR1 = PULSO_MAX - ((pulso_servos[4] * _XTAL_FREQ) / DIECISEIS);
-                else {
-                    TMR1 = PULSO_MAX - ((((0.02 / NUM_SERVOS) - pulso_servos[4]) * _XTAL_FREQ) / DIECISEIS);
-                    servo = 0;
-                }
-        }
-
-        PIR1bits.TMR1IF = 0;
-    }
+void interrupt servos(){
+       
+    if (PIR1bits.TMR1IF){
+    
+     if (servo==0){
+       servo1=1-servo1;
+       if (servo1) TMR1=65536-((pulso_servos[0] *_XTAL_FREQ)/16);  
+       else {TMR1=65536-((((0.02/num_servos)-pulso_servos[0])*_XTAL_FREQ)/16); servo++;}   
+     }   
+     
+     if (servo==1){
+      servo2=1-servo2;
+      if (servo2) TMR1=65536-((pulso_servos[1] *_XTAL_FREQ)/16);
+      else {TMR1=65536-((((0.02/num_servos)-pulso_servos[1])*_XTAL_FREQ)/16); servo = 0;}        
+     }
+     
+     }
+     
+     PIR1bits.TMR1IF=0;
+    
+    
 }
-
 void main(void) {
-    // Oscilador
-    OSCCONbits.IRCF = 0b1110;
-    OSCCONbits.SCS = 0b00;
+   
+    //Oscilador
+    OSCCONbits.IRCF=0b1110;
+    OSCCONbits.SCS=0b00;
     ////
-
-    // Configuracion del puerto
-    TRISA = 1;
-    PORTA = 0;
-    TRISB = 0;
-    PORTB = 0;
-
-    // Configuracion interrupcion
-    PIE1bits.TMR1IE = 1; // Hanilita la interrupcion por timer
-    PIR1bits.TMR1IF = 0; // Limpia la bandera del timer 1
-    INTCONbits.GIE = 1; // Interrupcion Global
-    INTCONbits.PEIE = 1; // Interrupcion por periferico
-
-    // Configurar timer
-    T1CONbits.T1CKPS = 0b10; // Divisor 4
-    T1CONbits.TMR1CS = 0b00; // Fosc /4
-    T1CONbits.T1OSCEN = 0; // Oscilador LP deshabilitado
-    T1CONbits.nT1SYNC = 1; // No sincroniza
-
-    T1CONbits.TMR1ON = 1; // Encender el timer
-
-    while (1) {
-
-        if (PORTAbits.RA1 == 0) {
-            PIR1bits.TMR1IF = 0;
-            
-            servo = 4;
-            pulso_servos[4] = 0.0020;
-            __delay_ms(100);
-
-            pulso_servos[4] = 0.0010;
-            __delay_ms(100);
-        } else {
-            servo = 0;
-            pulso_servos[0] = 0.0010;
-            __delay_ms(100);
-
-            servo = 1;
-            pulso_servos[1] = 0.0010;
-            __delay_ms(100);
-
-            servo = 2;
-            pulso_servos[2] = 0.0010;
-            __delay_ms(100);
-
-            servo = 3;
-            pulso_servos[3] = 0.0010;
-            __delay_ms(100);
-
-
-            servo = 0;
-            pulso_servos[0] = 0.0020;
-            __delay_ms(100);
-
-            servo = 1;
-            pulso_servos[1] = 0.0020;
-            __delay_ms(100);
-
-            servo = 2;
-            pulso_servos[2] = 0.0020;
-            __delay_ms(100);
-
-            servo = 3;
-            pulso_servos[3] = 0.0020;
-            __delay_ms(100);
-            
-            
-            __delay_ms(200);
-        }
+    
+    //Configuracion del puerto 
+    TRISB=0;
+    PORTB=0;
+    
+    //Configuracion interrupcion
+    
+    PIE1bits.TMR1IE=1; //Hanilita la interrupcion por timer
+    PIR1bits.TMR1IF=0; //Limpia la bandera del timer 1
+    INTCONbits.GIE=1; // Interrupcion Global
+    INTCONbits.PEIE=1; // Interrupcion por periferico
+    //Configurar timer
+    
+    T1CONbits.T1CKPS=0b10; // Divisor 4
+    T1CONbits.TMR1CS=0b00;// Fosc /4
+    T1CONbits.T1OSCEN=0; // Oscilador LP deshabilitao
+    T1CONbits.nT1SYNC=1; // No sinconia
+    
+    
+    T1CONbits.TMR1ON=1; // Encender el timer
+    
+    while(1){
+        servo=0;
+        pulso_servos[0]=0.0010;
+        __delay_ms(100);
+        
+        servo=1;
+        pulso_servos[1]=0.0010;
+        __delay_ms(100);
+       
+       servo=0;
+        pulso_servos[0]=0.0020;
+        __delay_ms(100);
+        
+        servo=1;
+        pulso_servos[1]=0.0020;
+        __delay_ms(100);
+        
     }
-
     return;
 }
