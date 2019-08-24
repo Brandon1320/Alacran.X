@@ -85,6 +85,7 @@ void main(void) {
         servo=1;
         pulso_servos[1]=0.0010;
         __delay_ms(100);
+        
        
        servo=0;
         pulso_servos[0]=0.0020;
@@ -97,3 +98,4 @@ void main(void) {
     }
     return;
 }
+ 
